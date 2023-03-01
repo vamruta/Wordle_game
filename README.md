@@ -7,10 +7,10 @@ Download both files, put them in the same folder.
 Run the python file with command : python WORDLE.py
 
 What my code can do: 
-  It's not perfect. 
-  As far as I know, it follows the game rules.
-  You can use backspace button your keyboard to go back to prev box.
-  Enter to check your guess.
+  * It's not perfect. 
+  * As far as I know, it follows the game rules.
+  * You can use backspace button your keyboard to go back to prev box.
+  * Enter to check your guess.
   
 
 Game rules :
