@@ -17,7 +17,6 @@ class WordleGameGUI:
         self.box_list[0].focus_set()
         self.prev_guesses = []
 
-
         self.prev_guesses_frame = tk.Frame(self.master)
         self.prev_guesses_frame.pack()
 
@@ -110,33 +109,30 @@ class WordleGameGUI:
                 self.master.destroy()
 
             self.guesses_left_label.config(text='Guesses left: ' + str(self.guesses_left))
-            self.prev_guesses.append( guess )            
+            self.prev_guesses.append( guess )       
 
-        prev_guess_frame = tk.Frame(self.prev_guesses_frame)
-        prev_guess_frame.pack(side="bottom", padx=10)
+        if self.prev_guesses:
+            prev_guess_frame = tk.Frame(self.prev_guesses_frame)
+            prev_guess_frame.pack(side="bottom", padx=10)
         
-        # Add labels for displaying the letters and colors
-        for letter, color in zip(guess, res):
-            prev_guess_label = tk.Label(prev_guess_frame, text=letter, width=2, font=("Helvetica", 16))
-            if color == "green":
-                prev_guess_label.config(bg="green", fg="white")
-            elif color == "yellow":
-                prev_guess_label.config(bg="yellow", fg="black")
-            else:
-                prev_guess_label.config(bg="gray", fg="black")
-            prev_guess_label.pack(side="left")
+            # Add labels for displaying the letters and colors
+            for letter, color in zip(guess, res):
+                prev_guess_label = tk.Label(prev_guess_frame, text=letter, width=2, font=("Helvetica", 16))
+                if color == "green":
+                    prev_guess_label.config(bg="green", fg="white")
+                elif color == "yellow":
+                    prev_guess_label.config(bg="yellow", fg="black")
+                else:
+                    prev_guess_label.config(bg="gray", fg="black")
+                prev_guess_label.pack(side="left")
 
 class Wordle:
-
-    def __init__(self):
-        self.word_list = ['apple', 'guess', 'brain', 'words', 'items' , 'based' , "leech", "steel", "wreck"]
-        #with open("words.txt", "r") as f: words = f.readlines()
+    def __init__(self):        
+        with open("words.txt", "r") as f: words = f.readlines()
         #Filter the words that have exactly 5 letters and return them as a list
-        #self.word_list = [word.strip() for word in words if len(word.strip()) == 5]
-        self.target = "steel"#random.choice(self.word_list)
-        self.word_list = set(self.word_list)
-
-    from collections import Counter
+        self.word_list = [word.strip() for word in words if len(word.strip()) == 5]
+        self.target = random.choice(self.word_list)
+        self.word_list = set(self.word_list)    
 
     def check(self, guess):
         res = []
@@ -153,7 +149,6 @@ class Wordle:
 
                 if target_letters[guess[i]] == 0:
                     del target_letters[guess[i]]
-
             else:
                 res.append('gray')
 
@@ -163,8 +158,6 @@ class Wordle:
                 target_letters[guess[i]] -= 1
 
         return res
-
-
 
 root = tk.Tk()
 game = WordleGameGUI(root)
