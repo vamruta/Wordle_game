@@ -136,10 +136,9 @@ class Wordle:
         self.target = "steel"#random.choice(self.word_list)
         self.word_list = set(self.word_list)
 
+    from collections import Counter
+
     def check(self, guess):
-        if len(guess) != 5:
-            return "Invalid guess. Please enter a 5 letter word."
-        
         res = []
         target = self.target
         target_letters = Counter(target)
@@ -159,10 +158,12 @@ class Wordle:
                 res.append('gray')
 
         for i in range(5):
-            if guess[i] != target[i] and guess[i] in target_letters:
+            if guess[i] != target[i] and guess[i] in target_letters and target_letters[guess[i]] > 0:
                 res[i] = 'yellow'
+                target_letters[guess[i]] -= 1
 
         return res
+
 
 
 root = tk.Tk()
