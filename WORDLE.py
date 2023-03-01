@@ -3,38 +3,23 @@ from collections import Counter
 import tkinter as tk
 from tkinter import messagebox
 
-class PrevGuessesBox(tk.Frame):
-    def __init__(self, master):
-        super().__init__(master)
-        self.prev_guesses = []
-        self.create_widgets()
-
-    def create_widgets(self):
-        self.prev_guesses_label = tk.Label(self, text="Previous guesses:")
-        self.prev_guesses_label.pack()
-
-    def add_guess(self, box_list):  
-        guess_row = tk.Frame(self)
-
-        for box in box_list:
-            box.config(state="readonly")
-            box.pack(side="left", padx=2)
-        guess_row.pack()
-
 class WordleGameGUI:
     def __init__(self, master):
         self.master = master
         self.wordle = Wordle()
+        self.guess_frame = tk.Frame(self.master)
+        self.guess_frame.pack()
+        self.prev_guesses_frame = tk.Frame(self.master)
+        self.prev_guesses_frame.pack()
+
         self.guesses_left = 6
         self.create_widgets()
         self.box_list[0].focus_set()
         self.prev_guesses = []
-        # create PrevGuessesBox instance and pack it in the main window
-        #self.prev_guesses_box = PrevGuessesBox(self.master)
-        #self.prev_guesses_box.pack(pady=10)
+
 
         self.prev_guesses_frame = tk.Frame(self.master)
-        self.prev_guesses_frame.pack(pady=10)
+        self.prev_guesses_frame.pack()
 
         self.guesses = []
 
@@ -72,7 +57,7 @@ class WordleGameGUI:
         for i in range(5):
             box = tk.Entry(self.master, width=5, justify='center', font=('Arial', 20))
             box.config(validatecommand=(box.register(lambda text: self.validate_box(box)), '%P'))
-            box.pack(side=tk.LEFT, padx=5)
+            box.pack(side=tk.LEFT, padx=5, in_= self.guess_frame )
             box.bind('<KeyRelease>', self.handle_keyrelease)
             box.bind('<BackSpace>', lambda event, index=i: self.handle_backspace(event))
             self.box_list.append(box)
@@ -81,7 +66,10 @@ class WordleGameGUI:
                 
             if i == 4:
                 box.bind('<KeyRelease-Return>', lambda event: self.guess_btn.invoke())
-            
+
+        self.guess_frame.pack(pady=10)
+        self.prev_guesses_frame.pack(pady=10)
+
         self.guess_btn = tk.Button(self.master, text='Guess', command=self.submit_guess)
         self.guess_btn.pack()
 
@@ -141,15 +129,17 @@ class WordleGameGUI:
 class Wordle:
 
     def __init__(self):
-        #self.word_list = ['apple', 'guess', 'brain', 'words', 'items' , 'based' , "leech", "steel", "wreck"]
-        with open("words.txt", "r") as f:
-            words = f.readlines()
+        self.word_list = ['apple', 'guess', 'brain', 'words', 'items' , 'based' , "leech", "steel", "wreck"]
+        #with open("words.txt", "r") as f: words = f.readlines()
         #Filter the words that have exactly 5 letters and return them as a list
-        self.word_list = [word.strip() for word in words if len(word.strip()) == 5]
-        self.target = random.choice(self.word_list)
+        #self.word_list = [word.strip() for word in words if len(word.strip()) == 5]
+        self.target = "steel"#random.choice(self.word_list)
         self.word_list = set(self.word_list)
 
     def check(self, guess):
+        if len(guess) != 5:
+            return "Invalid guess. Please enter a 5 letter word."
+        
         res = []
         target = self.target
         target_letters = Counter(target)
