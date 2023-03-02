@@ -5,7 +5,7 @@
  * Python 3.x
  * Tkinter (usually pre-installed with Python)
  
-###Installation
+### Installation
  * Download both the WORDLE.py and words.txt files and save them in the same folder.
  
 ### How to Play
