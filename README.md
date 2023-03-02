@@ -17,11 +17,17 @@
     - A correct letter in the wrong place will show a yellow circle.
     - An incorrect letter will show a gray circle.
  5. Repeat steps 2-4 until you guess the word in six tries or less.
- 
+
 ### Game Rules
  1. You have to guess the Wordle in six tries or less.
- 2. Every word you enter must be in the word list. 
- 3. Letters can be used more than once.
+ 2. Letters can be used more than once. 
+ 3. Every word you enter must be a valid word in the word list. 
+ 
+### Errors 
+The game will throw an error box with messange depending on below cases:
+ * If a word is not valid, i.e. it is not from the English words list in this repo or
+ * If you have already guessed that words before
+To close the error box and return to the game, simply press Esc key from you keyboard. 
  
 ### Notes
  * This implementation is not perfect, but it follows the game rules.
