@@ -13,9 +13,9 @@
  2. Enter your guess for the 5-letter word and press the Enter key on your keyboard.
  3. You can use the Backspace button to go back to the previous box and correct your guess.
  4. The game will return a feedback of colores for each letter in your guess.
-    a. A correct letter in the correct place will show a green circle.
-    b. A correct letter in the wrong place will show a yellow circle.
-    c. An incorrect letter will show a gray circle.
+    - A correct letter in the correct place will show a green circle.
+    - A correct letter in the wrong place will show a yellow circle.
+    - An incorrect letter will show a gray circle.
  5. Repeat steps 2-4 until you guess the word in six tries or less.
  
 ### Game Rules
