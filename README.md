@@ -1,5 +1,5 @@
 # Wordle Game with Python and Tkinter:
- This is a Python implementation of the popular word-guessing game Wordle using the Tkinter library for the GUI. The dictionary of words used by the game is sourced from words_alpha.txt by dwyl.
+ This is a Python implementation of the popular word-guessing game Wordle using the Tkinter library for the GUI. The dictionary of words used by the game is sourced from [words_alpha.txt by dwyl.](https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt)
 
 ### Requirements
  * Python 3.x
