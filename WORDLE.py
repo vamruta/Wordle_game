@@ -6,6 +6,7 @@ from tkinter import messagebox
 class WordleGameGUI:
     def __init__(self, master):
         self.master = master
+        self.master.title("Wordle Game")
         self.wordle = Wordle()
         self.guess_frame = tk.Frame(self.master)
         self.guess_frame.pack()
@@ -16,10 +17,6 @@ class WordleGameGUI:
         self.create_widgets()
         self.box_list[0].focus_set()
         self.prev_guesses = []
-
-        self.prev_guesses_frame = tk.Frame(self.master)
-        self.prev_guesses_frame.pack()
-
         self.guesses = []
 
     def validate_box(self, event):
@@ -47,48 +44,76 @@ class WordleGameGUI:
             if index < 4:
                 self.box_list[index + 1].focus_set()
 
-    def create_widgets(self):
-        self.word_label = tk.Label(self.master, text=f"Word to guess:")
-        self.word_label.pack()
-
-        self.box_list = []
-
+    def create_boxlist(self, ):
+        box_list = []
         for i in range(5):
             box = tk.Entry(self.master, width=5, justify='center', font=('Arial', 20))
             box.config(validatecommand=(box.register(lambda text: self.validate_box(box)), '%P'))
             box.pack(side=tk.LEFT, padx=5, in_= self.guess_frame )
             box.bind('<KeyRelease>', self.handle_keyrelease)
             box.bind('<BackSpace>', lambda event, index=i: self.handle_backspace(event))
-            self.box_list.append(box)
+            box_list.append(box)
             if i == 0:
-                box.focus_set()
-                
+                box.focus_set()                
             if i == 4:
                 box.bind('<KeyRelease-Return>', lambda event: self.guess_btn.invoke())
+        return box_list
+
+    def create_widgets(self):
+        self.box_list = self.create_boxlist()        
 
         self.guess_frame.pack(pady=10)
         self.prev_guesses_frame.pack(pady=10)
 
         self.guess_btn = tk.Button(self.master, text='Guess', command=self.submit_guess)
-        self.guess_btn.pack()
+        #self.guess_btn.pack()
 
         self.status_label = tk.Label(self.master, text='')
         self.status_label.pack()
 
-        self.guesses_left_label = tk.Label(self.master, text='Guesses left: ' + str(self.guesses_left))
+        self.guesses_left_label = tk.Label(self.master, text=f"Guesses left: {self.guesses_left} ")
         self.guesses_left_label.pack()
+
+    def is_error(self, guess, res):
+        if guess in self.prev_guesses:
+            messagebox.showerror("Invalid Guess", f"You already guessed the word : {guess}")
+            return True 
+        elif isinstance(res, str):
+            messagebox.showerror( "Invalid Guess", res )
+            return True
+        return False
+
+    def show_prev_guesses(self, guess, res):
+        if self.prev_guesses:
+            prev_guess_frame = tk.Frame(self.prev_guesses_frame)
+            prev_guess_frame.pack(side="bottom", padx=10)
+        
+            # Add labels for displaying the letters and colors
+            for letter, color in zip(guess, res):
+                prev_guess_label = tk.Label(prev_guess_frame, text=letter, width=2, font=("Arial", 18))
+                if color == "green":
+                    prev_guess_label.config(bg="green", fg="white")
+                elif color == "yellow":
+                    prev_guess_label.config(bg="yellow", fg="black")
+                else:
+                    prev_guess_label.config(bg="gray", fg="black")
+                prev_guess_label.pack(side="left")
+
+    def game_ended(self, res):
+        if res.count('green') == 5:
+            tk.messagebox.showinfo('Congratulations!', 'You guessed the word: ' + self.wordle.target)
+            return True 
+        elif self.guesses_left == 0 and res.count('green') < 5:
+            tk.messagebox.showinfo('Game over', 'You ran out of guesses. The word was: ' + self.wordle.target)
+            return True 
+        return False
 
     def submit_guess(self):
         guess = ''.join([box.get() for box in self.box_list])
         res = self.wordle.check(guess)
 
-        if guess in self.prev_guesses:
-            messagebox.showerror("Invalid Guess", f"You already guessed the word : {guess}")
-            return 
-
-        if isinstance(res, str):
-            messagebox.showerror("Invalid Guess", "Please enter a valid {}-letter word".format(5))
-            return 
+        if self.is_error( guess, res ):
+            return
 
         for i, box in enumerate(self.box_list):
             if res[i] == 'green':
@@ -99,33 +124,16 @@ class WordleGameGUI:
                 box.config(bg='gray', fg='black')        
 
         self.guesses_left -= 1
+                
+        self.guesses_left_label.config( text = f"Guesses left: {self.guesses_left}", font=('Arial', 10) )
 
-        if res.count('green') == 5:
-            tk.messagebox.showinfo('Congratulations!', 'You guessed the word: ' + self.wordle.target)
-            self.master.destroy()
-        else:
-            if self.guesses_left == 0 and res.count('green') < 5:
-                tk.messagebox.showinfo('Game over', 'You ran out of guesses. The word was: ' + self.wordle.target)
-                self.master.destroy()
+        self.prev_guesses.append( guess )       
 
-            self.guesses_left_label.config(text='Guesses left: ' + str(self.guesses_left))
-            self.prev_guesses.append( guess )       
+        self.show_prev_guesses(guess, res)
 
-        if self.prev_guesses:
-            prev_guess_frame = tk.Frame(self.prev_guesses_frame)
-            prev_guess_frame.pack(side="bottom", padx=10)
+        if self.game_ended(res):
+            self.master.destroy()     
         
-            # Add labels for displaying the letters and colors
-            for letter, color in zip(guess, res):
-                prev_guess_label = tk.Label(prev_guess_frame, text=letter, width=2, font=("Helvetica", 16))
-                if color == "green":
-                    prev_guess_label.config(bg="green", fg="white")
-                elif color == "yellow":
-                    prev_guess_label.config(bg="yellow", fg="black")
-                else:
-                    prev_guess_label.config(bg="gray", fg="black")
-                prev_guess_label.pack(side="left")
-
 class Wordle:
     def __init__(self):        
         with open("words.txt", "r") as f: words = f.readlines()
